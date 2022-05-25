@@ -1,0 +1,16 @@
+{
+	"env": {
+		"DB_NAME": "development",
+		"DB_USER_NAME": "michel",
+		"DB_USER_PWD": "xDLFQ6UkcPyvLMnw",
+
+		"FRONT_END_URL": "http://localhost:3000",
+
+		"JWT_SECRET": "7EqBT7As3poLS&%6URr&wVAdFkA5GXB#G4xswGo7cEkNnpM2um",
+
+		"NODEMAILER_EMAIL": "info@six-app.com",
+		"NODEMAILER_PASSWORD": "dt5dt3s@!@tkydy",
+
+		"UUID_NAMESPACE": "3e39b49f-ab39-4668-9377-2af5906bae99"
+	}
+}
