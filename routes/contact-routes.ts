@@ -1,9 +1,9 @@
-import { Router } from 'express';
+import { Router } from "express";
 
-const contactControllers = require('../controllers/contact-controllers');
+const sendMessageController = require("../controllers/contact/send-message");
 
 const router = Router();
 
-router.post('/message', contactControllers.sendMessage);
+router.post("/message", sendMessageController.sendMessage);
 
 module.exports = router;

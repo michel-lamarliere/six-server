@@ -1,16 +1,18 @@
 import { Router } from "express";
 
 const checkAuth = require("../middleware/check-auth");
-const usersControllers = require("../controllers/users-controllers");
+const signUpController = require("../controllers/users/sign-up");
+const signInController = require("../controllers/users/sign-in");
+const refreshDataController = require("../controllers/users/refresh");
 
 const router = Router();
 
-router.post("/sign-up", usersControllers.signUp);
+router.post("/sign-up", signUpController.signUp);
 
-router.post("/sign-in", usersControllers.signIn);
+router.post("/sign-in", signInController.signIn);
 
 router.use(checkAuth);
 
-router.get("/refresh-data/:userId", usersControllers.refreshData);
+router.get("/refresh-data/:userId", refreshDataController.refreshData);
 
 module.exports = router;

@@ -1,13 +1,15 @@
 import { RequestHandler } from "express";
-const { ObjectId } = require("mongodb");
-const { addMinutes, isBefore } = require("date-fns");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const { v5: uuidv5 } = require("uuid");
+import bcrypt from "bcrypt";
+import { addMinutes } from "date-fns";
 
-const database = require("../utils/db-connect");
-const sendEmailConfirmationEmail = require("../utils/send-email-confirmation-email");
-const sendEmail = require("../utils/send-email");
+const { v5: uuidv5 } = require("uuid");
+const jwt = require("jsonwebtoken");
+
+const database = require("../../../utils/db-connect");
+const {
+  sendEmailConfirmationEmail,
+} = require("../../../utils/send-email-address-confirmation-email");
+const { sendEmail } = require("../../../utils/send-email");
 
 const signUp: RequestHandler = async (req, res, next) => {
   const {
@@ -159,73 +161,4 @@ const signUp: RequestHandler = async (req, res, next) => {
   });
 };
 
-const signIn: RequestHandler = async (req, res, next) => {
-  const { email: reqEmail, password: reqPassword } = req.body;
-
-  const databaseConnect = await database.getDb().collection("users");
-
-  const user = await databaseConnect.findOne({ email: reqEmail });
-
-  let validInputs = {
-    email: false,
-    password: false,
-  };
-
-  if (!user) {
-    res.status(400).json({ validInputs });
-    return;
-  } else {
-    validInputs.email = true;
-  }
-
-  // CHECKS IF THE PASSWORD MATCHES THE USER'S HASHED PASSWORD
-  const matchingPasswords = await bcrypt.compare(reqPassword, user.password);
-
-  // IF THE PASSWORDS DON'T MATCH
-  if (matchingPasswords) {
-    validInputs.password = true;
-  }
-
-  if (!validInputs.email || !validInputs.password) {
-    res.status(400).json({ validInputs });
-    return;
-  }
-
-  // CREATES A TOKEN
-  const token = await jwt.sign(
-    { userId: user._id, email: user.email },
-    process.env.JWT_SECRET,
-    { expiresIn: "1h" }
-  );
-
-  res.status(200).json({
-    token,
-    // id: user._id,
-    icon: user.icon,
-    name: user.name,
-    email: user.email,
-    confirmedEmail: user.confirmation.confirmed,
-  });
-};
-
-const refreshData: RequestHandler = async (req, res, next) => {
-  const id = new ObjectId(req.params.userId);
-
-  const databaseConnect = await database.getDb().collection("users");
-
-  // CHECKS IF THE USER EXISTS
-  const user = await databaseConnect.findOne({ _id: id });
-
-  if (!user) {
-    res.status(404).json({ fatal: true });
-    return;
-  }
-
-  res
-    .status(200)
-    .json({ success: true, message: "Données rafraichies.", user });
-};
-
 exports.signUp = signUp;
-exports.signIn = signIn;
-exports.refreshData = refreshData;
