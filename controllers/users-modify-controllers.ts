@@ -224,8 +224,8 @@ const changeEmailConfirmation: RequestHandler = async (req, res, next) => {
 };
 
 const changeName: RequestHandler = async (req, res, next) => {
-  const { id: reqIdStr, newName: reqNewName } = req.body;
-  const reqId = new ObjectId(reqIdStr);
+  const { newName: reqNewName } = req.body;
+  const reqId = new ObjectId(req.body.userId);
 
   const databaseConnect = await database.getDb().collection("users");
 
@@ -274,7 +274,7 @@ const changeName: RequestHandler = async (req, res, next) => {
 
   res
     .status(200)
-    .json({ success: true, message: "Nom modifié.", name: reqNewName });
+    .json({ name: reqNewName });
 };
 
 const changePassword: RequestHandler = async (req, res, next) => {

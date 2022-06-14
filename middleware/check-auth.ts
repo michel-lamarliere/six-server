@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 const jwt = require('jsonwebtoken');
 
-const checkAuth: RequestHandler = (
+const checkAuth: RequestHandler =  (
   // req: { method: string; headers: { authorization: string }; userData: { id: {} } },
   req: any,
   res,
@@ -19,6 +19,7 @@ const checkAuth: RequestHandler = (
   try {
     const token = req.headers.authorization.split(' ')[1];
 
+
     if (!token) {
       res.status(403).json({
         error: true,
@@ -28,11 +29,11 @@ const checkAuth: RequestHandler = (
     }
 
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    req.userData = { id: decodedToken.id };
+
+    req.body.userId = decodedToken.id;
     next();
   } catch (error) {
     res.status(500).json({
-      error: true,
       message: "Erreur lors de la vérification d'autorisation.",
     });
     return;
