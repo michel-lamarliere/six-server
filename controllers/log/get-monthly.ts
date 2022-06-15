@@ -11,7 +11,7 @@ const {
 
 const database = require("../../utils/db-connect");
 
-const getMonthly: RequestHandler = async (req, res, next) => {
+const getMonthlyData: RequestHandler = async (req, res, next) => {
   const reqId = new ObjectId(req.params.id);
   const reqFirstDateOfMonth = new Date(req.params.date);
   const reqTask = req.params.task;
@@ -92,4 +92,4 @@ const getMonthly: RequestHandler = async (req, res, next) => {
   res.status(200).json(matchedDatesArray);
 };
 
-exports.getMonthly = getMonthly;
+exports.getMonthlyData = getMonthlyData;

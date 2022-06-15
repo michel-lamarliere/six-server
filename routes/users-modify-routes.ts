@@ -1,9 +1,10 @@
 import { Router } from "express";
 
 const checkAuth = require("../middleware/check-auth");
+const checkUserExists = require("../middleware/check-user-exists");
 const confirmEmailAddressController = require("../controllers/users/confirm-email-address");
 const resendEmailAddressConfirmationController = require("../controllers/users/confirm-email-address/resend-email");
-const sendEmailForgotPasswordController = require("../controllers/users/modify/password/forgot-password/send-email");
+const sendForgotPasswordEmailController = require("../controllers/users/modify/password/forgot-password/send-email");
 const checkForgotPasswordAuthController = require("../controllers/users/modify/password/forgot-password/check-auth");
 const changeForgottenPasswordController = require("../controllers/users/modify/password/forgot-password");
 const changeEmailController = require("../controllers/users/modify/email-address");
@@ -21,7 +22,7 @@ router.patch(
 
 router.get(
   "/password/forgot/send-email/:email",
-  sendEmailForgotPasswordController.sendEmailForgotPassword
+  sendForgotPasswordEmailController.sendForgotPasswordEmail
 );
 
 router.get(
@@ -38,20 +39,30 @@ router.patch("/email", changeEmailController.changeEmailAddressConfirmation);
 
 router.patch("/password", changePasswordController.changePassword);
 
-router.use(checkAuth);
-
 router.post(
   "/email-confirmation/send-email",
-  resendEmailAddressConfirmationController.resendEmailConfirmationEmail
+  resendEmailAddressConfirmationController.resendEmailAddressConfirmationEmail
 );
 
-router.patch("/name", changeNameController.changeName);
+router.patch(
+  "/name",
+  checkAuth,
+  checkUserExists,
+  changeNameController.changeName
+);
 
-router.patch("/image", changeIconController.changeIcon);
+router.patch(
+  "/icon",
+  checkAuth,
+  checkUserExists,
+  changeIconController.changeIcon
+);
 
 router.patch(
   "/email/send-emails",
-  sendChangeEmailEmailsController.sendChangeEmailEmails
+  checkAuth,
+  checkUserExists,
+  sendChangeEmailEmailsController.sendChangeEmailAddressEmails
 );
 
 module.exports = router;

@@ -23,7 +23,7 @@ const addData: RequestHandler = async (req, res, next) => {
   const user = await databaseConnect.findOne({ _id: reqId });
 
   if (!user) {
-    res.status(404).json({ fatal: true });
+    res.status(401);
     return;
   }
 

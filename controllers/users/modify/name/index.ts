@@ -7,24 +7,17 @@ const database = require("../../../../utils/db-connect");
 const changeName: RequestHandler = async (req, res, next) => {
   const { newName: reqNewName } = req.body;
   const reqId = new ObjectId(req.body.userId);
+  const user = req.body.userData;
 
   const databaseConnect = await database.getDb().collection("users");
-
-  // CHECKS IF THE USER EXISTS
-  const user = await databaseConnect.findOne({ _id: reqId });
-
-  if (!user) {
-    res.status(404).json({ fatal: true });
-    return;
-  }
 
   let validateNewName = false;
 
   if (reqNewName === user.name) {
     res.status(400).json({
-      error: true,
-      details: { sameName: true },
+      sameNames: true,
     });
+    return;
   }
 
   // CHECKS IF THE NAME IS VALID
@@ -37,8 +30,7 @@ const changeName: RequestHandler = async (req, res, next) => {
 
   if (!validateNewName) {
     res.status(400).json({
-      error: true,
-      details: { format: true },
+      incorrectFormat: true,
     });
     return;
   }
@@ -53,7 +45,7 @@ const changeName: RequestHandler = async (req, res, next) => {
     }
   );
 
-  res.status(200).json({ name: reqNewName });
+  res.status(200).json({ newName: reqNewName });
 };
 
 exports.changeName = changeName;

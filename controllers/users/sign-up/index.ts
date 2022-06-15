@@ -6,15 +6,13 @@ const { v5: uuidv5 } = require("uuid");
 const jwt = require("jsonwebtoken");
 
 const database = require("../../../utils/db-connect");
-const {
-  sendEmailConfirmationEmail,
-} = require("../../../utils/send-email-address-confirmation-email");
-const { sendEmail } = require("../../../utils/send-email");
+const sendEmailAddressConfirmationEmail = require("../../../utils/send-email-address-confirmation-email");
+const sendEmail = require("../../../utils/send-email");
 
 const signUp: RequestHandler = async (req, res, next) => {
   const {
     name: reqName,
-    email: reqEmail,
+    emailAddress: reqEmailAddress,
     password: reqPassword,
     passwordConfirmation: reqPasswordConfirmation,
   } = await req.body;
@@ -24,7 +22,7 @@ const signUp: RequestHandler = async (req, res, next) => {
   const validInputs = {
     all: false,
     name: false,
-    email: {
+    emailAddress: {
       format: false,
       isAvailable: false,
     },
@@ -42,18 +40,18 @@ const signUp: RequestHandler = async (req, res, next) => {
   }
 
   if (
-    reqEmail.match(
+    reqEmailAddress.match(
       /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     )
   ) {
-    validInputs.email.format = true;
+    validInputs.emailAddress.format = true;
   }
 
   // // CHECKS IF THE USER EXISTS
-  const user = await databaseConnect.findOne({ email: reqEmail });
+  const user = await databaseConnect.findOne({ emailAddress: reqEmailAddress });
 
   if (!user) {
-    validInputs.email.isAvailable = true;
+    validInputs.emailAddress.isAvailable = true;
   }
 
   if (
@@ -70,8 +68,8 @@ const signUp: RequestHandler = async (req, res, next) => {
 
   if (
     validInputs.name &&
-    validInputs.email.format &&
-    validInputs.email.isAvailable &&
+    validInputs.emailAddress.format &&
+    validInputs.emailAddress.isAvailable &&
     validInputs.password &&
     validInputs.passwordConfirmation
   ) {
@@ -87,13 +85,16 @@ const signUp: RequestHandler = async (req, res, next) => {
 
   // HASHES THE PASSWORD
   const hashedPassword = await bcrypt.hash(reqPassword, 10);
-  const hashedConfirmationCode = uuidv5(reqEmail, process.env.UUID_NAMESPACE);
+  const hashedConfirmationCode = uuidv5(
+    reqEmailAddress,
+    process.env.UUID_NAMESPACE
+  );
 
   // CREATES THE USER'S OBJECT
   const newUser = {
     icon: 0,
     name: reqName,
-    email: reqEmail,
+    emailAddress: reqEmailAddress,
     password: hashedPassword,
     forgotPassword: {
       code: null,
@@ -120,7 +121,9 @@ const signUp: RequestHandler = async (req, res, next) => {
   await databaseConnect.insertOne(newUser);
 
   // GETS THE ID
-  let findingNewUser = await databaseConnect.findOne({ email: reqEmail });
+  let findingNewUser = await databaseConnect.findOne({
+    emailAddress: reqEmailAddress,
+  });
 
   if (!findingNewUser) {
     res.status(404).json({
@@ -132,13 +135,13 @@ const signUp: RequestHandler = async (req, res, next) => {
   // CREATES THE TOKEN
   let token = await jwt.sign(
     { id: findingNewUser._id, email: findingNewUser.email },
-    process.env.JWT_SECRET,
-    { expiresIn: "1h" }
+    process.env.JWT_SECRET
+    /*{ expiresIn: "1h" }*/
   );
 
   // SEND AN EMAIL CONFIRMATION EMAIL
-  sendEmailConfirmationEmail({
-    to: reqEmail,
+  sendEmailAddressConfirmationEmail({
+    to: reqEmailAddress,
     uniqueCode: hashedConfirmationCode,
   });
 
@@ -146,7 +149,7 @@ const signUp: RequestHandler = async (req, res, next) => {
     to: "info@six-app.com",
     subject: "Nouveau utilisateur !",
     text: "",
-    html: `${reqEmail} | ${reqName} vient de créer un compte.`,
+    html: `${reqEmailAddress} | ${reqName} vient de créer un compte.`,
   });
 
   res.status(201).json({
@@ -156,7 +159,7 @@ const signUp: RequestHandler = async (req, res, next) => {
     // id: findingNewUser._id,
     icon: findingNewUser.icon,
     name: findingNewUser.name,
-    email: findingNewUser.email,
+    emailAddress: findingNewUser.emailAddress,
     confirmedEmail: findingNewUser.confirmation.confirmed,
   });
 };

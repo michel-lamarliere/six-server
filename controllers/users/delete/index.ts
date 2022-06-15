@@ -3,7 +3,7 @@ import { RequestHandler } from "express";
 const database = require("../../../utils/db-connect");
 const sendEmail = require("../../../utils/send-email");
 
-const deleteAccount: RequestHandler = async (req, res, next) => {
+const deleteUserAccount: RequestHandler = async (req, res, next) => {
   const { email: reqEmail, code: reqCode } = req.body;
 
   // const reqId = new ObjectId(reqIdStr);
@@ -46,4 +46,4 @@ const deleteAccount: RequestHandler = async (req, res, next) => {
   res.json({ success: true, message: "Compte supprimé." });
 };
 
-exports.deleteAccount = deleteAccount;
+exports.deleteUserAccount = deleteUserAccount;

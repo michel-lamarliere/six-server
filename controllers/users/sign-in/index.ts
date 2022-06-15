@@ -6,14 +6,14 @@ const jwt = require("jsonwebtoken");
 const database = require("../../../utils/db-connect");
 
 const signIn: RequestHandler = async (req, res, next) => {
-  const { email: reqEmail, password: reqPassword } = req.body;
+  const { emailAddress: reqEmailAddress, password: reqPassword } = req.body;
 
   const databaseConnect = await database.getDb().collection("users");
 
-  const user = await databaseConnect.findOne({ email: reqEmail });
+  const user = await databaseConnect.findOne({ email: reqEmailAddress });
 
   let validInputs = {
-    email: false,
+    emailAddress: false,
     password: false,
   };
 
@@ -21,7 +21,7 @@ const signIn: RequestHandler = async (req, res, next) => {
     res.status(400).json({ validInputs });
     return;
   } else {
-    validInputs.email = true;
+    validInputs.emailAddress = true;
   }
 
   // CHECKS IF THE PASSWORD MATCHES THE USER'S HASHED PASSWORD
@@ -32,16 +32,16 @@ const signIn: RequestHandler = async (req, res, next) => {
     validInputs.password = true;
   }
 
-  if (!validInputs.email || !validInputs.password) {
+  if (!validInputs.emailAddress || !validInputs.password) {
     res.status(400).json({ validInputs });
     return;
   }
 
   // CREATES A TOKEN
   const token = await jwt.sign(
-    { userId: user._id, email: user.email },
-    process.env.JWT_SECRET,
-    { expiresIn: "1h" }
+    { userId: user._id, email: user.emailAddress },
+    process.env.JWT_SECRET
+    /*{ expiresIn: "1h" }*/
   );
 
   res.status(200).json({
@@ -49,7 +49,7 @@ const signIn: RequestHandler = async (req, res, next) => {
     // id: user._id,
     icon: user.icon,
     name: user.name,
-    email: user.email,
+    emailAddress: user.emailAddress,
     confirmedEmail: user.confirmation.confirmed,
   });
 };

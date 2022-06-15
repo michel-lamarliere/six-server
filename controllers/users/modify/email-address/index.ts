@@ -14,11 +14,6 @@ const changeEmailAddressConfirmation: RequestHandler = async (
   // CHECKS IF THE USER EXISTS
   const user = await databaseConnect.findOne({ email: reqOldEmail });
 
-  if (!user) {
-    res.status(404).json({ fatal: true });
-    return;
-  }
-
   const newEmailExists = await databaseConnect.findOne({ email: reqNewEmail });
 
   if (newEmailExists) {

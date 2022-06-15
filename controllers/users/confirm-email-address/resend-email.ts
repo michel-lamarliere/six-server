@@ -6,7 +6,11 @@ const { addMinutes, isBefore } = require("date-fns");
 const database = require("../../../utils/db-connect");
 const sendEmailConfirmationEmail = require("../../../utils/send-email-address-confirmation-email");
 
-const resendEmailConfirmationEmail: RequestHandler = async (req, res, next) => {
+const resendEmailAddressConfirmationEmail: RequestHandler = async (
+  req,
+  res,
+  next
+) => {
   const id = new ObjectId(req.body.id);
 
   const databaseConnect = await database.getDb().collection("users");
@@ -77,4 +81,5 @@ const resendEmailConfirmationEmail: RequestHandler = async (req, res, next) => {
   });
 };
 
-exports.resendEmailConfirmationEmail = resendEmailConfirmationEmail;
+exports.resendEmailAddressConfirmationEmail =
+  resendEmailAddressConfirmationEmail;

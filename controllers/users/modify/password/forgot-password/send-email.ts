@@ -6,7 +6,7 @@ const crypto = require("crypto");
 const database = require("../../../../../utils/db-connect");
 const sendEmail = require("../../../../../utils/send-email");
 
-const sendEmailForgotPassword: RequestHandler = async (req, res, next) => {
+const sendForgotPasswordEmail: RequestHandler = async (req, res, next) => {
   const reqEmail = req.params.email;
 
   const databaseConnect = await database.getDb().collection("users");
@@ -84,4 +84,4 @@ const sendEmailForgotPassword: RequestHandler = async (req, res, next) => {
   });
 };
 
-exports.sendEmailForgotPassword = sendEmailForgotPassword;
+exports.sendForgotPasswordEmail = sendForgotPasswordEmail;

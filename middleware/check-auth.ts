@@ -1,24 +1,27 @@
-import { RequestHandler } from 'express';
-const jwt = require('jsonwebtoken');
+import { RequestHandler } from "express";
 
-const checkAuth: RequestHandler =  (
+const jwt = require("jsonwebtoken");
+
+const checkAuth: RequestHandler = (
   // req: { method: string; headers: { authorization: string }; userData: { id: {} } },
   req: any,
   res,
   next
 ) => {
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return next();
   }
 
   if (!req.headers.authorization) {
-    res.status(403).json({ error: true, message: 'Pas de req.header.authorization' });
+    res.status(403).json({
+      error: true,
+      message: "Pas de req.header.authorization",
+    });
     return;
   }
 
   try {
-    const token = req.headers.authorization.split(' ')[1];
-
+    const token = req.headers.authorization.split(" ")[1];
 
     if (!token) {
       res.status(403).json({

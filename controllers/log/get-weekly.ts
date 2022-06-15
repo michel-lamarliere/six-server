@@ -5,7 +5,7 @@ const { addDays, isAfter, isSameDay } = require("date-fns");
 
 const database = require("../../utils/db-connect");
 
-const getWeekly: RequestHandler = async (req, res, next) => {
+const getWeeklyData: RequestHandler = async (req, res, next) => {
   const reqId = new ObjectId(req.params.id);
   const reqStartDate = new Date(req.params.startofweek);
 
@@ -165,4 +165,4 @@ const getWeekly: RequestHandler = async (req, res, next) => {
     .json({ datesArray: datesArray, responseArray: responseArray });
 };
 
-exports.getWeekly = getWeekly;
+exports.getWeeklyData = getWeeklyData;

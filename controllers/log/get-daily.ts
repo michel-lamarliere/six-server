@@ -4,7 +4,7 @@ const { ObjectId } = require("mongodb");
 
 const database = require("../../utils/db-connect");
 
-const getDaily: RequestHandler = async (req, res, next) => {
+const getDailyData: RequestHandler = async (req, res, next) => {
   const reqId = new ObjectId(req.params.id);
   const reqDate: Date = new Date(req.params.date);
 
@@ -54,4 +54,4 @@ const getDaily: RequestHandler = async (req, res, next) => {
   return res.status(200).json(result[0].data.six);
 };
 
-exports.getDaily = getDaily;
+exports.getDailyData = getDailyData;

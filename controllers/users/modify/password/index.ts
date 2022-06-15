@@ -20,11 +20,6 @@ const changePassword: RequestHandler = async (req, res, next) => {
   // CHECKS IF THE USER EXISTS
   const user = await databaseConnect.findOne({ _id: reqId });
 
-  if (!user) {
-    res.status(404).json({ fatal: true });
-    return;
-  }
-
   let validInputs = {
     oldPassword: false,
     newPassword: {

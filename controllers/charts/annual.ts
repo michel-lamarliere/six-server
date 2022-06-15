@@ -10,19 +10,12 @@ import {
 
 const database = require("../../utils/db-connect");
 
-const getAnnual: RequestHandler = async (req, res, next) => {
-  const reqId = new ObjectId(req.params.id);
+const getAnnualData: RequestHandler = async (req, res, next) => {
+  const reqId = new ObjectId(req.body.userId);
   const reqYear: number = +req.params.year;
   const reqTask = req.params.task;
 
   const databaseConnect = await database.getDb().collection("users");
-
-  // CHECKS IF THE USER EXISTS
-  const user = await databaseConnect.findOne({ _id: reqId });
-
-  if (!user) {
-    res.status(403).json({ fatal: true });
-  }
 
   const resultsArray: {
     empty: number;
@@ -39,7 +32,8 @@ const getAnnual: RequestHandler = async (req, res, next) => {
       future: 0,
     });
   }
-  const data = await databaseConnect
+
+  await databaseConnect
     .aggregate([
       {
         $match: {
@@ -119,9 +113,8 @@ const getAnnual: RequestHandler = async (req, res, next) => {
     const loopingDate = new Date(reqYear, i, daysInLoopingMonth);
 
     if (isBefore(loopingDate, new Date())) {
-      const total =
+      resultsArray[i].empty =
         daysInLoopingMonth - (resultsArray[i].half + resultsArray[i].full);
-      resultsArray[i].empty = total;
     } else {
       const loopingMonth = getMonth(loopingDate);
 
@@ -135,16 +128,14 @@ const getAnnual: RequestHandler = async (req, res, next) => {
         }
       }
 
-      const futureTotal = daysInLoopingMonth - index;
-      resultsArray[i].future = futureTotal;
+      resultsArray[i].future = daysInLoopingMonth - index;
 
-      const emptyTotal =
+      resultsArray[i].empty =
         daysInLoopingMonth -
         (resultsArray[i].full + resultsArray[i].half + resultsArray[i].future);
-      resultsArray[i].empty = emptyTotal;
     }
   }
   res.status(200).json({ success: true, array: resultsArray });
 };
 
-exports.getAnnual = getAnnual;
+exports.getAnnualData = getAnnualData;
