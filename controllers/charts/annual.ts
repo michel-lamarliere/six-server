@@ -11,7 +11,7 @@ import {
 const database = require("../../utils/db-connect");
 
 const getAnnualData: RequestHandler = async (req, res, next) => {
-  const reqId = new ObjectId(req.body.userId);
+  const reqUserId = new ObjectId(req.body.userId);
   const reqYear: number = +req.params.year;
   const reqTask = req.params.task;
 
@@ -37,7 +37,7 @@ const getAnnualData: RequestHandler = async (req, res, next) => {
     .aggregate([
       {
         $match: {
-          _id: reqId,
+          _id: reqUserId,
         },
       },
       {

@@ -9,6 +9,10 @@ const database = require("../../../utils/db-connect");
 const sendEmailAddressConfirmationEmail = require("../../../utils/send-email-address-confirmation-email");
 const sendEmail = require("../../../utils/send-email");
 
+import { UserResponseData } from "../../../types/user-reponse-data";
+import { User } from "../../../types/user";
+import { TokenData } from "../../../types/token-data";
+
 const signUp: RequestHandler = async (req, res, next) => {
   const {
     name: reqName,
@@ -48,7 +52,9 @@ const signUp: RequestHandler = async (req, res, next) => {
   }
 
   // // CHECKS IF THE USER EXISTS
-  const user = await databaseConnect.findOne({ emailAddress: reqEmailAddress });
+  const user: User = await databaseConnect.findOne({
+    emailAddress: reqEmailAddress,
+  });
 
   if (!user) {
     validInputs.emailAddress.isAvailable = true;
@@ -85,25 +91,26 @@ const signUp: RequestHandler = async (req, res, next) => {
 
   // HASHES THE PASSWORD
   const hashedPassword = await bcrypt.hash(reqPassword, 10);
-  const hashedConfirmationCode = uuidv5(
+
+  const hashedEmailAddressConfirmationUniqueCode = uuidv5(
     reqEmailAddress,
     process.env.UUID_NAMESPACE
   );
 
   // CREATES THE USER'S OBJECT
-  const newUser = {
+  const newUser: User = {
     icon: 0,
     name: reqName,
-    emailAddress: reqEmailAddress,
-    password: hashedPassword,
-    forgotPassword: {
-      code: null,
-      nextEmail: null,
-    },
-    confirmation: {
+    emailAddress: {
+      value: reqEmailAddress,
       confirmed: false,
-      code: hashedConfirmationCode,
-      nextEmail: addMinutes(new Date(), 5),
+      confirmationEmailUniqueCode: hashedEmailAddressConfirmationUniqueCode,
+      timeBeforeNextConfirmationEmail: addMinutes(new Date(), 5),
+    },
+    password: {
+      value: hashedPassword,
+      forgotPasswordEmailUniqueCode: null,
+      timeBeforeNextForgotPasswordEmail: null,
     },
     goals: {
       nutrition: null,
@@ -113,7 +120,7 @@ const signUp: RequestHandler = async (req, res, next) => {
       sports: null,
       social_life: null,
     },
-    deleteCode: null,
+    deleteAccountUniqueCode: null,
     log: [],
   };
 
@@ -122,19 +129,25 @@ const signUp: RequestHandler = async (req, res, next) => {
 
   // GETS THE ID
   let findingNewUser = await databaseConnect.findOne({
-    emailAddress: reqEmailAddress,
+    "emailAddress.value": reqEmailAddress,
   });
 
   if (!findingNewUser) {
     res.status(404).json({
-      message: "Erreur, veuillez réessayer plus tard.",
+      message: "User not found after insert it in the database.",
     });
     return;
   }
 
   // CREATES THE TOKEN
-  let token = await jwt.sign(
-    { id: findingNewUser._id, email: findingNewUser.email },
+
+  const tokenData: TokenData = {
+    userId: findingNewUser._id,
+    emailAddress: findingNewUser.emailAddress.value,
+  };
+
+  const token = await jwt.sign(
+    tokenData,
     process.env.JWT_SECRET
     /*{ expiresIn: "1h" }*/
   );
@@ -142,7 +155,7 @@ const signUp: RequestHandler = async (req, res, next) => {
   // SEND AN EMAIL CONFIRMATION EMAIL
   sendEmailAddressConfirmationEmail({
     to: reqEmailAddress,
-    uniqueCode: hashedConfirmationCode,
+    uniqueCode: hashedEmailAddressConfirmationUniqueCode,
   });
 
   sendEmail({
@@ -152,16 +165,17 @@ const signUp: RequestHandler = async (req, res, next) => {
     html: `${reqEmailAddress} | ${reqName} vient de créer un compte.`,
   });
 
-  res.status(201).json({
-    // success: true,
-    // message: "Compte créé.",
+  const userResponseData: UserResponseData = {
     token: token,
-    // id: findingNewUser._id,
     icon: findingNewUser.icon,
     name: findingNewUser.name,
-    emailAddress: findingNewUser.emailAddress,
-    confirmedEmail: findingNewUser.confirmation.confirmed,
-  });
+    emailAddress: {
+      value: findingNewUser.emailAddress.value,
+      confirmed: findingNewUser.emailAddress.confirmed,
+    },
+  };
+
+  res.status(201).json(userResponseData);
 };
 
 exports.signUp = signUp;

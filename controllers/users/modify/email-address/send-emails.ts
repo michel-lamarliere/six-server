@@ -5,15 +5,17 @@ const sendEmail = require("../../../../utils/send-email");
 
 const sendChangeEmailAddressEmails: RequestHandler = async (req, res, next) => {
   const { newEmailAddress: reqNewEmailAddress } = req.body;
-  const { oldEmailAddress: reqOldEmailAddress } = req.body.userData;
+  const { emailAddress: reqOldEmailAddress } = req.body.userData;
 
   const databaseConnect = await database.getDb().collection("users");
 
   // CHECKS IF THE USER EXISTS
-  const user = await databaseConnect.findOne({ email: reqOldEmailAddress });
+  const user = await databaseConnect.findOne({
+    "emailAddress.value": reqOldEmailAddress,
+  });
 
   const existingUserWithNewEmailAddress = await databaseConnect.findOne({
-    email: reqNewEmailAddress,
+    "emailAddress.value": reqNewEmailAddress,
   });
 
   if (existingUserWithNewEmailAddress) {

@@ -6,6 +6,8 @@ const database = require("../utils/db-connect");
 const checkUserExists: RequestHandler = async (req: any, res, next) => {
   const userIdStr = req.body.userId;
 
+  console.log(userIdStr);
+
   const databaseConnect = await database.getDb().collection("users");
 
   const reqUserId = new ObjectId(userIdStr);

@@ -14,7 +14,6 @@ const checkAuth: RequestHandler = (
 
   if (!req.headers.authorization) {
     res.status(403).json({
-      error: true,
       message: "Pas de req.header.authorization",
     });
     return;
@@ -25,7 +24,6 @@ const checkAuth: RequestHandler = (
 
     if (!token) {
       res.status(403).json({
-        error: true,
         message: "Vous n'êtes pas autorisé à effectuer cette action.",
       });
       return;
@@ -33,7 +31,10 @@ const checkAuth: RequestHandler = (
 
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
-    req.body.userId = decodedToken.id;
+    console.log(decodedToken);
+
+    req.body.userId = decodedToken.userId;
+
     next();
   } catch (error) {
     res.status(500).json({

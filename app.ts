@@ -32,16 +32,4 @@ app.use("/api/charts", chartsRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/goals", goalsRoutes);
 
-// ERROR HANDLING : RETURN IN JSON FORMAT
-// app.use(
-// 	(
-// 		// error: { message: string },
-// 		req: express.Request,
-// 		res: express.Response,
-// 		next: express.NextFunction
-// 	) => {
-// 		// res.status(400).json({ message: error.message });
-// 	}
-// );
-
 module.exports = app;

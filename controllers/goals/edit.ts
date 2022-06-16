@@ -4,14 +4,14 @@ import { ObjectId } from "mongodb";
 const database = require("../../utils/db-connect");
 
 const editGoals: RequestHandler = async (req, res, next) => {
-  const { id: reqIdStr, task: reqTask, goals: reqGoalsStr } = req.body;
+  const { id: reqUserIdStr, task: reqTask, goals: reqGoalsStr } = req.body;
 
-  const reqId = new ObjectId(reqIdStr);
+  const reqUserId = new ObjectId(reqUserIdStr);
 
   const databaseConnect = await database.getDb().collection("users");
 
   // CHECKS IF THE USER EXISTS
-  const user = await databaseConnect.findOne({ _id: reqId });
+  const user = await databaseConnect.findOne({ _id: reqUserId });
 
   if (!user) {
     return res.status(404).json({ fatal: true });
@@ -44,18 +44,17 @@ const editGoals: RequestHandler = async (req, res, next) => {
   }
 
   const editedUser = await databaseConnect.updateOne(
-    { _id: reqId },
+    { _id: reqUserId },
     { $set: { [`goals.${reqTask}`]: reqGoalsStr } }
   );
 
   if (!editedUser) {
     return res.status(400).json({
-      error: true,
       message: "Erreur lors de l'enregistrement des données.",
     });
   }
 
-  res.status(200).json({ success: true });
+  res.status(200).json({ message: "Goal edited." });
 };
 
 exports.editGoals = editGoals;
