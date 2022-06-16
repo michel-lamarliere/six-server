@@ -10,6 +10,6 @@ const router = Router();
 router.use(checkAuth);
 router.use(checkUserExists);
 
-router.get("/annual/:id/:year/:task", chartsControllers.getAnnualData);
+// router.get("/annual/:id/:year/:task", chartsControllers.getAnnualData);
 
 module.exports = router;

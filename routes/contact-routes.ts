@@ -8,16 +8,16 @@ const sendMessageLoggedOutController = require("../controllers/contact/send-mess
 
 const router = Router();
 
-router.post(
-  "/logged-in/message",
-  checkAuth,
-  checkUserExists,
-  sendMessageLoggedInController.sendMessageLoggedIn
-);
+// router.post(
+//   "/logged-in/message",
+//   checkAuth,
+//   checkUserExists,
+//   sendMessageLoggedInController.sendMessageLoggedIn
+// );
 
-router.post(
-  "/logged-out/message",
-  sendMessageLoggedOutController.sendMessageLoggedOut
-);
+// router.post(
+//   "/logged-out/message",
+//   sendMessageLoggedOutController.sendMessageLoggedOut
+// );
 
 module.exports = router;

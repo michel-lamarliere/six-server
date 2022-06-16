@@ -13,12 +13,12 @@ const router = Router();
 router.use(checkAuth);
 router.use(checkUserExists);
 
-router.post("/task", addDataController.addData);
+// router.post("/task", addDataController.addData);
 
-router.get("/daily/:id/:date", getDailyController.getDailyData);
+// router.get("/daily/:id/:date", getDailyController.getDailyData);
 
-router.get("/weekly/:id/:startofweek", getWeeklyController.getWeeklyData);
+// router.get("/weekly/:id/:startofweek", getWeeklyController.getWeeklyData);
 
-router.get("/monthly/:id/:date/:task", getMonthlyController.getMonthlyData);
+// router.get("/monthly/:id/:date/:task", getMonthlyController.getMonthlyData);
 
 module.exports = router;

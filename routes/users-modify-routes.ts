@@ -15,54 +15,48 @@ const changeIconController = require("../controllers/users/modify/icon");
 
 const router = Router();
 
-router.patch(
-  "/email-confirmation/confirm",
-  confirmEmailAddressController.confirmEmailAddress
-);
+// router.patch(
+//   "/email-address-confirmation/confirm",
+//   confirmEmailAddressController.confirmEmailAddress
+// );
 
-router.get(
-  "/password/forgot/send-email/:email",
-  sendForgotPasswordEmailController.sendForgotPasswordEmail
-);
+// router.get(
+//   "/password/forgot/send-email/:email",
+//   sendForgotPasswordEmailController.sendForgotPasswordEmail
+// );
 
-router.get(
-  "/password/forgot/confirmation/:email/:uniqueId",
-  checkForgotPasswordAuthController.checkForgotPasswordAuth
-);
+// router.get(
+//   "/password/forgot/confirmation/:email/:uniqueId",
+//   checkForgotPasswordAuthController.checkForgotPasswordAuth
+// );
 
-router.patch(
-  "/password/forgot",
-  changeForgottenPasswordController.changeForgottenPassword
-);
+// router.patch(
+//   "/password/forgot",
+//   changeForgottenPasswordController.changeForgottenPassword
+// );
 
-router.patch("/email", changeEmailController.changeEmailAddressConfirmation);
+// router.patch(
+//   "/emailAddress",
+//   changeEmailController.changeEmailAddressConfirmation
+// );
 
-router.patch("/password", changePasswordController.changePassword);
+// router.post(
+//   "/email-address-confirmation/send-email",
+//   resendEmailAddressConfirmationController.resendEmailAddressConfirmationEmail
+// );
 
-router.post(
-  "/email-confirmation/send-email",
-  resendEmailAddressConfirmationController.resendEmailAddressConfirmationEmail
-);
+router.use(checkAuth);
+router.use(checkUserExists);
 
-router.patch(
-  "/name",
-  checkAuth,
-  checkUserExists,
-  changeNameController.changeName
-);
+router.patch("/name", changeNameController.changeName);
 
-router.patch(
-  "/icon",
-  checkAuth,
-  checkUserExists,
-  changeIconController.changeIcon
-);
+router.patch("/icon", changeIconController.changeIcon);
 
 router.patch(
-  "/email/send-emails",
-  checkAuth,
-  checkUserExists,
+  "/email-address/send-emails",
   sendChangeEmailEmailsController.sendChangeEmailAddressEmails
 );
+
+router.patch("/password", changePasswordController.changePassword);
 
 module.exports = router;

@@ -31,8 +31,6 @@ const checkAuth: RequestHandler = (
 
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
-    console.log(decodedToken);
-
     req.body.userId = decodedToken.userId;
 
     next();

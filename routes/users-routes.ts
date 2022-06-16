@@ -13,11 +13,11 @@ router.post("/sign-up", signUpController.signUp);
 
 router.post("/sign-in", signInController.signIn);
 
-router.get(
-  "/refresh-data/:userId",
-  checkAuth,
-  checkUserExists,
-  refreshDataController.refreshUserData
-);
+// router.get(
+//   "/refresh-data/:userId",
+//   checkAuth,
+//   checkUserExists,
+//   refreshDataController.refreshUserData
+// );
 
 module.exports = router;

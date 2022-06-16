@@ -11,8 +11,8 @@ const router = Router();
 router.use(checkAuth);
 router.use(checkUserExists);
 
-router.get("/goal/:id/:task", getGoalsController.getGoals);
+// router.get("/goal/:id/:task", getGoalsController.getGoals);
 
-router.post("/edit-goal", editGoalsController.editGoals);
+// router.post("/edit-goal", editGoalsController.editGoals);
 
 module.exports = router;

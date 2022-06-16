@@ -1,7 +1,6 @@
 import { Log } from "./log";
 
 export interface User {
-  // _id: string;
   icon: number;
   name: string;
   emailAddress: {
